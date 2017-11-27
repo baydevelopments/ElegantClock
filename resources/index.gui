@@ -1,0 +1,27 @@
+<svg class="background">
+  <g>
+    <!--rect id="bar" x="0" y="0" width="348" height="40%" fill="#998100"/ -->
+    
+    <!--gradientRect id="bar" x="0" y="0" width="348" height="40"
+      gradient-type="radial"
+      gradient-color1="#998100" gradient-color2="yellow" /-->
+    
+    <gradientRect id="bar" x="0" y="0" width="348" height="40"
+      gradient-type="linear"
+      gradient-x1="0" gradient-y1="25%"
+      gradient-x2="0" gradient-y2="75%"
+      gradient-color1="#ebd197"
+      gradient-color2="#998100"
+                  />
+    
+    <image x="5" y="5" width="30" height="30" href="battery.png"/>
+    <text id="battery-label" class="battery-label" x="40" y="30">####</text>
+    <text id="date-label" class="date-label" x="328" y="30">## ###</text>
+
+    <rect id="clock-face" x="0" y="40" width="348" height="210" fill="fb-black"/>
+    
+    <text id="time-label" class="time-label" x="174" y="152">##:##</text>
+    <text id="heart-label" class="heart-label" x="240" y="223">♥︎</text>
+    <text id="hr-label" class="hr-label" x="328" y="223">###</text>
+  </g>
+</svg>

@@ -5,12 +5,15 @@ import { HeartRateSensor } from "heart-rate";
 import clock from "clock";
 import { battery } from 'power';
 import { me } from "appbit";
+import { preferences } from "user-settings";
 import document from "document";
-
+import * as prefs from "../common/shared_preferences";
 import * as messaging from "messaging";
 import * as utils from "../common/utils";
 
 console.log("Elegant Clock App Started");
+
+const DEBUG_MODE = false;
 
 // Update the clock every minute
 clock.granularity = "seconds";
@@ -37,6 +40,7 @@ let bar = document.getElementById("bar");
 let heartRate = 0;
 let count = 0;
 let heartSymbolCount = 0;
+let clockDisplay = preferences.clockDisplay;
 
 // Keep a timestamp of the last reading received. Start when the app is started.
 let lastValueTimestamp = Date.now();
@@ -48,18 +52,22 @@ let lastValueTimestamp = Date.now();
 function updateBattery() {
   
   var batteryLevel = battery.chargeLevel;
-  //console.log(`battery level: ${batteryLevel}%`);
+  
+  if (DEBUG_MODE) {
+    console.log(`battery level: ${batteryLevel}%`);
+  }
   
   batteryLabel.text = batteryLevel + "%";
 }
 
 function changeColorScheme(color) {
   
+  if (DEBUG_MODE) {
+    console.log("color scheme changed: " + color);
+  }
+  
   var gradient = bar.gradient;
 
-  //console.log("gradient 1: " + gradient.colors['c1']);
-  //console.log("gradient 2: " + gradient.colors['c2']);
-  
   if (color == "gold") {
     gradient.colors['c1'] = GOLD_COLOR_1;
     gradient.colors['c2'] = GOLD_COLOR_2;
@@ -72,8 +80,6 @@ function changeColorScheme(color) {
     timeLabel.style.fill = SILVER_COLOR_2;
     heartRateLabel.style.fill = SILVER_COLOR_2;
   }
-  //gradient.colors['c1'] = "fb-black";
-  //console.log("gradient 1: " + gradient.colors['c1']);
 }
 
 function checkHeartRateSensorWorking() {
@@ -82,12 +88,17 @@ function checkHeartRateSensorWorking() {
   var now = Date.now();
   // difference between now and the last time a heart reading was taken.
   var difference = (now - lastValueTimestamp) / 1000;
-    
-  //console.log("hr: " + heartRate);
-  //console.log("ts: " + lastValueTimestamp + " now: " + now);
-  //console.log("ts diff: " + difference);
-    
+  
+  /**
+  if (DEBUG_MODE) {
+    console.log("hr: " + heartRate);
+    console.log("ts: " + lastValueTimestamp + " now: " + now);
+    console.log("ts diff: " + difference);
+  }
+  **/
+  
   if (difference > 3) {
+      
     heartRateLabel.text = "---";
   }
 }
@@ -99,16 +110,16 @@ function checkHeartRateSensorWorking() {
 clock.ontick = function(event) {
   
   var hours = event.date.getHours();
-  hours = utils.convert12Hour(hours);
+
+  if (clockDisplay == "12h" && hours > 12) hours-=12;
+  if (clockDisplay == "12h" && hours == 0) hours = 12;
+  
   hours = utils.zeroPad(hours, 1);
   
-  var minutes = event.date.getMinutes();
-  minutes = utils.zeroPad(minutes, 1);
+  var minutes = utils.zeroPad(event.date.getMinutes(), 1);
     
   timeLabel.text = `${hours}:${minutes}`;
-  
-  var date = `${utils.getDay()} ${utils.getMonth()}`;
-  dateLabel.text = date;
+  dateLabel.text = `${utils.getDay()} ${utils.getMonth()}`;;
 }
 
 /** @function
@@ -146,7 +157,7 @@ heartRateMonitor.onreading = function() {
 
 heartRateMonitor.onerror = function(error) {
   
-  console.log(error);
+  console.error(error);
 }
 
 /** @function
@@ -154,9 +165,11 @@ heartRateMonitor.onerror = function(error) {
  *  When user closes app stop heart rate sensor
  */
 me.onunload = function () {
-  
-  console.log("App Stopped");
+
+  console.log("Saving App preferences");
+  prefs.save();
   heartRateMonitor.stop();
+  console.log("App Stopped");
 }
 
 // Listen for the onmessage event
@@ -175,13 +188,32 @@ messaging.peerSocket.onmessage = function(evt) {
     if (color == "silver" || color == "gold") {
       
       changeColorScheme(color);
+      prefs.setItem("color", color);
+      prefs.save();
     }
   }
   else {
-    console.log("key is not recognised: " + evt);
+    console.error("key is not recognised: " + evt);
   }
 }
 
+function init() {
+    
+  if (prefs) {
+    
+    if (prefs.getItem("color")) {
+    
+      var color = prefs.getItem("color");
+
+      if (DEBUG_MODE) {
+        console.log("settings recovered... color: " + color);
+      }
+      changeColorScheme(color);
+    }
+  }
+}
+
+init();
 
 heartRateMonitor.start();
 

@@ -6,6 +6,8 @@ import * as messaging from "messaging";
 
 console.log("Companion Started");
 
+const DEBUG_MODE = false;
+
 /** @function
  *  @name = settingsStorage.onchange (event)
  *  Parses the message event from the companion components on change
@@ -13,18 +15,16 @@ console.log("Companion Started");
  */
 settingsStorage.onchange = function(evt) {
    
-//  let data = JSON.parse(evt.newValue);
-//  let value = data.name;
-//  console.log("sending data: " + evt.key + ":" + value);
-//  sendMessage(evt.key, value)
-
-//sendValue(evt.key, data["values"][0].value);
-
-  //console.log(JSON.stringify(evt));  
+  if (DEBUG_MODE) {
+    console.log(JSON.stringify(evt));
+  }
   var obj = JSON.parse(evt.newValue, function (event, value) {
 
-    sendMessage(evt.key, value); 
-    //console.log(evt.key + ": " + value);
+    sendMessage(evt.key, value);
+    
+    if (DEBUG_MODE) {
+      console.log(evt.key + ": " + value);
+    }
   }); 
 }
 
@@ -32,14 +32,14 @@ settingsStorage.onchange = function(evt) {
  *  @name = sendMessage (key, value)
  *  Send key/value pair
  */
-function sendMessage(key, val) {
+function sendMessage(key, value) {
 
-    var data = {key: key, value: val};
+    var data = {key: key, value: value};
   
-    // ##TO_DO## Test
     if (messaging.peerSocket.readyState === messaging.peerSocket.OPEN || messaging.peerSocket.readyState == 0) {
        messaging.peerSocket.send(data);
     } else {
-       console.log("No peerSocket connection");
+       console.error("No peerSocket connection");
+       setTimeout(sendMessage, 5000, key, value);
     }
 }

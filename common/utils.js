@@ -1,5 +1,4 @@
 // © 2017 Allie Reilly
-
 /**
   * Common Utilities
   */
@@ -138,7 +137,6 @@ export function millisecondsToDateString(duration) {
 
   var date = new Date(duration);
   date = ((new Date(duration)).toISOString().match(/(\d\d\:\d\d\:\d\d\.\d\d\d)/)[0]);
-  //console.log(date);
   return date;
 }
 

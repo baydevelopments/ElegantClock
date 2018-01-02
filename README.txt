@@ -16,7 +16,7 @@ ElegantClock 1.1.0 is a maintenance and functionality update. This version focus
 
 # Bug Fixes
 --------------------------
-* Added shared preferences library by Gregorie Sage to persist user settings for when
+* Added shared preferences library by JohnyGQD to persist user settings for when
   user restarts watch.
 * Added timeout to retry sending messages to watch from companion when connection is not working
 * Added 12/24 hour clock based on user settings

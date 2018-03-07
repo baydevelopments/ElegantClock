@@ -1,5 +1,5 @@
 README.txt  
-### Elegant Clock 1.1.0 Release Notes
+### Elegant Clock 1.1.1 Release Notes
 
 ## Release Date:
 --------------------------
@@ -7,12 +7,22 @@ README.txt
 
 ## Description:
 --------------------------
-ElegantClock 1.1.0 is a maintenance and functionality update. This version focuses on stability
+ElegantClock 1.1.1 is a maintenance and functionality update. This version focuses on stability
 
 ### Updates
 --------------------------
+## Update 1.1.1
+--------------------------
+ElegantClock 1.1.1 is a maintenance and functionality update. This version focuses on stability
+
+# Functionality Update
+--------------------------
+* Added support for Versa
+
+--------------------------
 ## Update 1.1.0
 --------------------------
+ElegantClock 1.1.0 is a maintenance and functionality update. This version focuses on stability
 
 # Bug Fixes
 --------------------------
